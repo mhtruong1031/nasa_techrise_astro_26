@@ -34,7 +34,7 @@ def main() -> None:
         thread.daemon = True
         thread.start()
 
-
+# Threading for GPS data collection
 def thread_gps_readings(gps: adafruit_gps.GPS_GtopI2C, batch_size: int, save_path: str, time_int: int) -> None:
     measurements = ["Timestamp", "Lattitude", "Longitude"]
     batch        = []
@@ -49,7 +49,7 @@ def thread_gps_readings(gps: adafruit_gps.GPS_GtopI2C, batch_size: int, save_pat
             batch = []
         sleep(time_int)
 
-
+# Threading for light data collection
 def thread_light_readings(ltr: adafruit_ltr390.LTR390, tsl: adafruit_tsl2591.TSL2591, batch_size: int, save_path: str, time_int: int) -> None:
     measurements = ["UV", "Light", "UV Index", "Lux Ambience", "Infrared", "Visible"]
     batch        = []
@@ -74,8 +74,8 @@ def get_gps_readings(gps: adafruit_gps.GPS_GtopI2C, measurements: list) -> dict:
         gps.timestamp_utc.tm_min,
         gps.timestamp_utc.tm_sec
     )
-    lattitude = gps.latitude
-    longitude = gps.longitude
+    lattitude       = gps.latitude
+    longitude       = gps.longitude
     collective_data = [timestamp, lattitude, longitude]
 
     sample = {key:value for (key, value) in zip(measurements, collective_data)}
@@ -100,6 +100,7 @@ def get_light_readings(ltr: adafruit_ltr390.LTR390, tsl: adafruit_tsl2591.TSL259
     sample = {key:value for (key, value) in zip(measurements, collective_data)}
     return sample
 
+# Writes list of dictionaries to a csv file
 def write_to_csv(path: str, data: list, field_names: list) -> None:
     with open(path, 'a') as csvfile: 
         writer = DictWriter(csvfile, fieldnames = field_names) 
